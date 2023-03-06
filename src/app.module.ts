@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as dotenv from 'dotenv';
+import { ExternalApiModule } from './modules/external-api/external-api.module';
+import { ScrapeDataModule } from './modules/scrape-data/scrape-data.module';
+import { TimetablesModule } from './modules/timetables/timetables.module';
 
 dotenv.config();
 
@@ -16,6 +19,9 @@ dotenv.config();
       autoLoadEntities: true,
       synchronize: true,
     }),
+    ExternalApiModule,
+    ScrapeDataModule,
+    TimetablesModule,
   ],
   controllers: [],
   providers: [],
