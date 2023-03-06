@@ -8,7 +8,7 @@ export class ExternalApiService {
   constructor(private readonly httpService: HttpService) {}
   private readonly logger = new Logger(ExternalApiService.name);
 
-  async getClasses(): Promise<string> {
+  async getTimetableList(): Promise<string> {
     const apiUrl = `https://www.zstrybnik.pl/html/lista.html`;
     const classesData = await this.getData(apiUrl);
 
@@ -26,7 +26,7 @@ export class ExternalApiService {
     const { data, status }: { data: string; status: number } =
       await firstValueFrom(
         this.httpService
-          .get<any>(apiUrl, {
+          .get(apiUrl, {
             headers: { 'Accept-Encoding': 'gzip,deflate,compress' },
           })
           .pipe(
