@@ -12,7 +12,7 @@ services:
     # Run a command against the development stage of the image
     command: npm run start:dev
     ports:
-      - 3012:3000
+      - ${APP_PORT}:3000
 
   postgres:
     image: postgres
