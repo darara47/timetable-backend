@@ -1,16 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { JSDOM } from 'jsdom';
-import { DailyTimetable, LessonData } from 'src/types/lessons.types';
-import {
-  TimetableList,
-  TimetableListTypes,
-} from 'src/types/timetableList.types';
+import { LessonData, Timetable } from 'src/types/lessons.types';
+import { Sections, SectionTypes } from 'src/types/sections.types';
 
 @Injectable()
 export class ScrapeDataService {
   private readonly logger = new Logger(ScrapeDataService.name);
 
-  async scrapeTimetableList(data: string): Promise<TimetableList[]> {
+  async scrapeTimetableList(data: string): Promise<Sections> {
     const dom = new JSDOM(data);
     const document = dom.window.document;
     const list = Array.from(document.getElementsByTagName('li'));
@@ -20,11 +17,11 @@ export class ScrapeDataService {
 
       const name = anchor.textContent;
       const url = anchor.getAttribute('href');
-      let type: TimetableListTypes;
+      let type: SectionTypes;
 
-      if (url.includes('plany/o')) type = TimetableListTypes.class;
-      if (url.includes('plany/n')) type = TimetableListTypes.teacher;
-      if (url.includes('plany/s')) type = TimetableListTypes.classroom;
+      if (url.includes('plany/o')) type = SectionTypes.class;
+      if (url.includes('plany/n')) type = SectionTypes.teacher;
+      if (url.includes('plany/s')) type = SectionTypes.classroom;
 
       return {
         name,
@@ -36,13 +33,7 @@ export class ScrapeDataService {
     return timetableList;
   }
 
-  async scrapeTimetable(data: string): Promise<{
-    monday: DailyTimetable;
-    thuesday: DailyTimetable;
-    wednesday: DailyTimetable;
-    thursday: DailyTimetable;
-    friday: DailyTimetable;
-  }> {
+  async scrapeTimetable(data: string): Promise<Timetable> {
     const dom = new JSDOM(data);
     const document = dom.window.document;
     const table = document.getElementsByTagName('table').item(2);
