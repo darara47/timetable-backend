@@ -8,11 +8,11 @@ export class ExternalApiService {
   constructor(private readonly httpService: HttpService) {}
   private readonly logger = new Logger(ExternalApiService.name);
 
-  async getTimetableList(): Promise<string> {
+  async getSections(): Promise<string> {
     const apiUrl = `https://www.zstrybnik.pl/html/lista.html`;
-    const classesData = await this.getData(apiUrl);
+    const sectionsData = await this.getData(apiUrl);
 
-    return classesData;
+    return sectionsData;
   }
 
   async getTimetable(url: string): Promise<string> {
