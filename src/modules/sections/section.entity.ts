@@ -1,4 +1,4 @@
-import { SectionTypes } from 'src/types/sections.types';
+import { SectionTypes } from '../../types/sections.types';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -6,9 +6,15 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   UpdateDateColumn,
+  Unique,
+  OneToMany,
+  JoinColumn,
 } from 'typeorm';
+import { Timetable } from '../timetables/timetable.entity';
 
 @Entity('sections')
+@Unique(['name'])
+@Unique(['url'])
 export class Section {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -18,6 +24,10 @@ export class Section {
 
   @Column()
   url: string;
+
+  @OneToMany(() => Timetable, (timetable) => timetable.section)
+  @JoinColumn()
+  timetables: Timetable[];
 
   @Column()
   type: SectionTypes;

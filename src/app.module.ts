@@ -4,6 +4,7 @@ import * as dotenv from 'dotenv';
 import { ExternalApiModule } from './modules/external-api/external-api.module';
 import { ScrapeDataModule } from './modules/scrape-data/scrape-data.module';
 import { SectionsModule } from './modules/sections/sections.module';
+import { TimetablesModule } from './modules/timetables/timetables.module';
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ dotenv.config();
     ExternalApiModule,
     ScrapeDataModule,
     SectionsModule,
+    TimetablesModule,
   ],
   controllers: [],
   providers: [],
