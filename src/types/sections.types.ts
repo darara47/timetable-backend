@@ -14,6 +14,7 @@ export type SectionResponse = {
   id: string;
   name: string;
   url: string;
+  timetables?: any;
   type: SectionTypes;
 };
 
