@@ -15,11 +15,11 @@ export class ExternalApiService {
     return sectionsData;
   }
 
-  async getTimetable(url: string): Promise<string> {
+  async getLesson(url: string): Promise<string> {
     const apiUrl = `https://www.zstrybnik.pl/html/${url}`;
-    const timetableData = await this.getData(apiUrl);
+    const lessonData = await this.getData(apiUrl);
 
-    return timetableData;
+    return lessonData;
   }
 
   private async getData(apiUrl: string): Promise<string> {

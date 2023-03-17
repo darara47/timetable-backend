@@ -1,4 +1,4 @@
-import { LessonType, WeekDays } from 'src/types/timetable.types';
+import { LessonType, WeekDays } from 'src/types/lesson.types';
 import {
   Column,
   CreateDateColumn,
@@ -10,8 +10,8 @@ import {
 } from 'typeorm';
 import { Section } from '../sections/section.entity';
 
-@Entity('timetables')
-export class Timetable {
+@Entity('lessons')
+export class Lesson {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

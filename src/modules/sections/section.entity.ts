@@ -10,7 +10,7 @@ import {
   OneToMany,
   JoinColumn,
 } from 'typeorm';
-import { Timetable } from '../timetables/timetable.entity';
+import { Lesson } from '../lessons/lesson.entity';
 
 @Entity('sections')
 @Unique(['name'])
@@ -25,9 +25,9 @@ export class Section {
   @Column()
   url: string;
 
-  @OneToMany(() => Timetable, (timetable) => timetable.section)
+  @OneToMany(() => Lesson, (lesson) => lesson.section)
   @JoinColumn()
-  timetables: Timetable[];
+  lessons: Lesson[];
 
   @Column()
   type: SectionTypes;

@@ -1,23 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SectionTypes } from 'src/types/sections.types';
-import { ScrapeTimetable } from 'src/types/timetable.types';
+import { LessonResponse, ScrapeLesson } from 'src/types/lesson.types';
 import { Repository } from 'typeorm';
 import { ExternalApiService } from '../external-api/external-api.service';
 import { ScrapeDataService } from '../scrape-data/scrape-data.service';
-import { CreateTimetableDto } from './dto/create-timetable.dto';
-import { Timetable } from './timetable.entity';
+import { CreateLessonDto } from './dto/create-lesson.dto';
+import { Lesson } from './lesson.entity';
 
 @Injectable()
-export class TimetablesService {
+export class LessonsService {
   constructor(
-    @InjectRepository(Timetable)
-    private readonly timetableRepository: Repository<Timetable>,
+    @InjectRepository(Lesson)
+    private readonly lessonRepository: Repository<Lesson>,
     private readonly externalApiService: ExternalApiService,
     private readonly scrapeDataService: ScrapeDataService,
   ) {}
 
-  async create(createTimetableDto: CreateTimetableDto): Promise<Timetable> {
+  async create(createLessonDto: CreateLessonDto): Promise<Lesson> {
     const {
       className,
       classURL,
@@ -30,9 +30,9 @@ export class TimetablesService {
       teacherURL,
       type,
       weekDay,
-    } = createTimetableDto;
+    } = createLessonDto;
 
-    const section = this.timetableRepository.create({
+    const section = this.lessonRepository.create({
       className,
       classURL,
       classroomName,
@@ -45,25 +45,34 @@ export class TimetablesService {
       type,
       weekDay,
     });
-    const savedSection = await this.timetableRepository.save(section);
+    const savedSection = await this.lessonRepository.save(section);
 
     return savedSection;
   }
 
-  async clearTable() {
-    await this.timetableRepository.query(`TRUNCATE sections CASCADE;`);
+  async getLessonsBySectionId(sectionId: string): Promise<LessonResponse[]> {
+    const lessons = await this.lessonRepository.findBy({
+      section: { id: sectionId },
+    });
+
+    return lessons;
   }
 
-  async getTimetableFromApi(
+  async clearTable() {
+    await this.lessonRepository.query(`TRUNCATE sections CASCADE;`);
+  }
+
+  async getLessonFromApi(
     url: string,
     sectionType: SectionTypes,
-  ): Promise<ScrapeTimetable[]> {
-    const dataAsHtmlString = await this.externalApiService.getTimetable(url);
-    const timetable = await this.scrapeDataService.scrapeTimetable(
+  ): Promise<ScrapeLesson[]> {
+    const dataAsHtmlString = await this.externalApiService.getLesson(url);
+    const lesson = await this.scrapeDataService.scrapeLesson(
       dataAsHtmlString,
       sectionType,
+      url,
     );
 
-    return timetable;
+    return lesson;
   }
 }
