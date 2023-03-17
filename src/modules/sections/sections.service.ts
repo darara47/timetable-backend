@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { SectionResponse, Sections } from 'src/types/sections.types';
 import { Repository } from 'typeorm';
 import { ExternalApiService } from '../external-api/external-api.service';
+import { LessonsService } from '../lessons/lessons.service';
 import { ScrapeDataService } from '../scrape-data/scrape-data.service';
-import { TimetablesService } from '../timetables/timetables.service';
 import { CreateSectionDto } from './dto/create-section.dto';
 import { Section } from './section.entity';
 
@@ -14,8 +14,8 @@ export class SectionsService {
     @InjectRepository(Section)
     private readonly sectionRepository: Repository<Section>,
     private readonly externalApiService: ExternalApiService,
+    private readonly lessonsService: LessonsService,
     private readonly scrapeDataService: ScrapeDataService,
-    private readonly timetablesService: TimetablesService,
   ) {}
 
   async create(createSectionDto: CreateSectionDto): Promise<SectionResponse> {
@@ -25,15 +25,6 @@ export class SectionsService {
     const savedSection = await this.sectionRepository.save(section);
 
     return this.mapSection(savedSection);
-  }
-
-  async getSectionWithTimetable(id: string): Promise<SectionResponse> {
-    const sectionDetails = await this.sectionRepository.findOne({
-      where: { id },
-      relations: ['timetables'],
-    });
-
-    return this.mapSection(sectionDetails);
   }
 
   async getAll(): Promise<SectionResponse[]> {
@@ -60,18 +51,18 @@ export class SectionsService {
     const canUpdate = await this.checkIfCanUpdateDatabase(sections);
 
     if (canUpdate) {
-      await this.timetablesService.clearTable();
+      await this.lessonsService.clearTable();
       await this.clearTable();
 
       sections.forEach(async (section) => {
         const createdSection = await this.create(section);
-        const timetables = await this.timetablesService.getTimetableFromApi(
+        const lessons = await this.lessonsService.getLessonFromApi(
           createdSection.url,
           createdSection.type,
         );
-        timetables.forEach(async (timetable) => {
-          await this.timetablesService.create({
-            ...timetable,
+        lessons.forEach(async (lesson) => {
+          await this.lessonsService.create({
+            ...lesson,
             sectionId: createdSection.id,
           });
         });
@@ -84,13 +75,13 @@ export class SectionsService {
   async checkIfCanUpdateDatabase(sections: Sections): Promise<boolean> {
     let canUpdate = true;
     const randomSection = sections[25];
-    const timetables = await this.timetablesService.getTimetableFromApi(
+    const lessons = await this.lessonsService.getLessonFromApi(
       randomSection.url,
       randomSection.type,
     );
 
     if (sections.length < 50) canUpdate = false;
-    if (timetables.length < 20) canUpdate = false;
+    if (lessons.length < 20) canUpdate = false;
 
     return canUpdate;
   }
@@ -104,7 +95,6 @@ export class SectionsService {
       id: section.id,
       name: section.name,
       url: section.url,
-      timetables: section.timetables,
       type: section.type,
     };
   }

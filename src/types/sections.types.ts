@@ -1,3 +1,5 @@
+import { ApiProperty } from '@nestjs/swagger';
+
 export enum SectionTypes {
   class = 'class',
   classroom = 'classroom',
@@ -10,12 +12,18 @@ export type Section = {
   type: SectionTypes;
 };
 
-export type SectionResponse = {
+export class SectionResponse {
+  @ApiProperty()
   id: string;
+
+  @ApiProperty()
   name: string;
+
+  @ApiProperty()
   url: string;
-  timetables?: any;
+
+  @ApiProperty()
   type: SectionTypes;
-};
+}
 
 export type Sections = Section[];

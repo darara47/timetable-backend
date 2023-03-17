@@ -1,7 +1,7 @@
 import { IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { LessonType, WeekDays } from 'src/types/timetable.types';
+import { LessonType, WeekDays } from 'src/types/lesson.types';
 
-export class CreateTimetableDto {
+export class CreateLessonDto {
   @IsString()
   className?: string;
 

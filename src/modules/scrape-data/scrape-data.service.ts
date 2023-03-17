@@ -3,11 +3,11 @@ import { JSDOM } from 'jsdom';
 import { Sections, SectionTypes } from 'src/types/sections.types';
 import {
   AnchorData,
-  BasicScrapeTimetable,
+  BasicScrapeLesson,
   LessonType,
-  ScrapeTimetable,
+  ScrapeLesson,
   WeekDays,
-} from 'src/types/timetable.types';
+} from 'src/types/lesson.types';
 
 @Injectable()
 export class ScrapeDataService {
@@ -16,7 +16,7 @@ export class ScrapeDataService {
     const document = dom.window.document;
     const list = Array.from(document.getElementsByTagName('li'));
 
-    const timetableList = list.map((item: Element) => {
+    const lessonList = list.map((item: Element) => {
       const anchor = item.getElementsByTagName('a').item(0);
 
       const name = anchor.textContent;
@@ -34,23 +34,24 @@ export class ScrapeDataService {
       };
     });
 
-    return timetableList;
+    return lessonList;
   }
 
-  async scrapeTimetable(
+  async scrapeLesson(
     data: string,
     sectionType: SectionTypes,
-  ): Promise<ScrapeTimetable[]> {
+    url: string,
+  ): Promise<ScrapeLesson[]> {
     const dom = new JSDOM(data);
     const document = dom.window.document;
     const table = document.getElementsByTagName('table').item(2);
 
-    const timetables: ScrapeTimetable[] = [];
+    const lessons: ScrapeLesson[] = [];
 
-    const lessons = Array.from(table.getElementsByClassName('l'));
-    lessons.forEach((lesson: Element, index: number) => {
-      let lessonData: BasicScrapeTimetable[] = null;
-      let mappedLessonData: ScrapeTimetable[] = null;
+    const scapedLessons = Array.from(table.getElementsByClassName('l'));
+    scapedLessons.forEach((lesson: Element, index: number) => {
+      let lessonData: BasicScrapeLesson[] = null;
+      let mappedLessonData: ScrapeLesson[] = null;
 
       const getWeekDay = (): WeekDays => {
         if (index % 5 === 0) {
@@ -599,21 +600,38 @@ export class ScrapeDataService {
           sClasses.length === 0 &&
           lesson.textContent.trim() !== ''
         ) {
-          // TODO:
-          // lessonData = {
-          //   text: lesson.textContent.trim(),
-          // };
+          mappedLessonData = [
+            {
+              lessonNumber,
+              subject: lesson.textContent.trim(),
+              type: LessonType.text,
+              weekDay: getWeekDay(),
+            },
+          ];
         }
-        if (lesson.textContent.trim() !== '' && lessonData === null) {
-          console.error('ERROR');
+        if (
+          lesson.textContent.trim() !== '' &&
+          lessonData === null &&
+          mappedLessonData === null
+        ) {
+          console.error('Unidentified data.');
           console.error(
             spanTags.length,
             aTags.length,
             pClasses.length,
             nClasses.length,
             sClasses.length,
+            url,
           );
           console.error(lesson.textContent);
+          mappedLessonData = [
+            {
+              lessonNumber,
+              subject: lesson.textContent.trim(),
+              type: LessonType.text,
+              weekDay: getWeekDay(),
+            },
+          ];
         }
       }
 
@@ -655,10 +673,10 @@ export class ScrapeDataService {
       }
 
       if (mappedLessonData) {
-        timetables.push(...mappedLessonData);
+        lessons.push(...mappedLessonData);
       }
     });
 
-    return timetables;
+    return lessons;
   }
 }

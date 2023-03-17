@@ -1,5 +1,6 @@
-import { Controller, Get, Param } from '@nestjs/common';
-import { ApiParam, ApiTags } from '@nestjs/swagger';
+import { Controller, Get } from '@nestjs/common';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { SectionResponse } from 'src/types/sections.types';
 import { SectionsService } from './sections.service';
 
 @ApiTags('Sections')
@@ -8,16 +9,13 @@ export class SectionsController {
   constructor(private sectionsService: SectionsService) {}
 
   @Get()
-  async getSections() {
+  @ApiOkResponse({ isArray: true, type: SectionResponse })
+  async getSections(): Promise<SectionResponse[]> {
     return this.sectionsService.getAll();
   }
 
-  @Get(':id')
-  @ApiParam({
-    name: 'id',
-    example: '03a9dcb5-2d07-4732-9268-de68d24df0f2',
-  })
-  async getSectionWithTimetable(@Param('id') id: string) {
-    return this.sectionsService.getSectionWithTimetable(id);
+  @Get('update/update')
+  async update() {
+    return this.sectionsService.updateDatabase();
   }
 }

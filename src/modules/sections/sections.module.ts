@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ExternalApiModule } from '../external-api/external-api.module';
+import { LessonsModule } from '../lessons/lessons.module';
 import { ScrapeDataModule } from '../scrape-data/scrape-data.module';
-import { TimetablesModule } from '../timetables/timetables.module';
 import { Section } from './section.entity';
 import { SectionsController } from './sections.controller';
 import { SectionsService } from './sections.service';
@@ -11,8 +11,8 @@ import { SectionsService } from './sections.service';
   imports: [
     TypeOrmModule.forFeature([Section]),
     ExternalApiModule,
+    LessonsModule,
     ScrapeDataModule,
-    TimetablesModule,
   ],
   providers: [SectionsService],
   controllers: [SectionsController],
