@@ -17,6 +17,29 @@ export class LessonsService {
     private readonly scrapeDataService: ScrapeDataService,
   ) {}
 
+  async getLessonsBySectionId(sectionId: string): Promise<LessonResponse[]> {
+    const lessons = await this.lessonRepository.find({
+      where: { section: { id: sectionId } },
+      order: { weekDay: 'ASC', lessonNumber: 'ASC', subject: 'ASC' },
+    });
+
+    return lessons;
+  }
+
+  async getLessonFromApi(
+    url: string,
+    sectionType: SectionTypes,
+  ): Promise<ScrapeLesson[]> {
+    const dataAsHtmlString = await this.externalApiService.getLesson(url);
+    const lesson = await this.scrapeDataService.scrapeLesson(
+      dataAsHtmlString,
+      sectionType,
+      url,
+    );
+
+    return lesson;
+  }
+
   async create(createLessonDto: CreateLessonDto): Promise<Lesson> {
     const {
       className,
@@ -50,29 +73,7 @@ export class LessonsService {
     return savedSection;
   }
 
-  async getLessonsBySectionId(sectionId: string): Promise<LessonResponse[]> {
-    const lessons = await this.lessonRepository.findBy({
-      section: { id: sectionId },
-    });
-
-    return lessons;
-  }
-
   async clearTable() {
     await this.lessonRepository.query(`TRUNCATE sections CASCADE;`);
-  }
-
-  async getLessonFromApi(
-    url: string,
-    sectionType: SectionTypes,
-  ): Promise<ScrapeLesson[]> {
-    const dataAsHtmlString = await this.externalApiService.getLesson(url);
-    const lesson = await this.scrapeDataService.scrapeLesson(
-      dataAsHtmlString,
-      sectionType,
-      url,
-    );
-
-    return lesson;
   }
 }
