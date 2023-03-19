@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ExternalApiModule } from '../external-api/external-api.module';
 import { LessonsModule } from '../lessons/lessons.module';
@@ -9,6 +10,7 @@ import { SectionsService } from './sections.service';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     TypeOrmModule.forFeature([Section]),
     ExternalApiModule,
     LessonsModule,

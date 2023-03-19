@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SectionResponse, Sections } from 'src/types/sections.types';
 import { Repository } from 'typeorm';
@@ -17,15 +18,7 @@ export class SectionsService {
     private readonly lessonsService: LessonsService,
     private readonly scrapeDataService: ScrapeDataService,
   ) {}
-
-  async create(createSectionDto: CreateSectionDto): Promise<SectionResponse> {
-    const { name, url, type } = createSectionDto;
-
-    const section = this.sectionRepository.create({ name, url, type });
-    const savedSection = await this.sectionRepository.save(section);
-
-    return this.mapSection(savedSection);
-  }
+  private readonly logger = new Logger(SectionsService.name);
 
   async getAll(): Promise<SectionResponse[]> {
     const sections = await this.sectionRepository.find();
@@ -33,20 +26,13 @@ export class SectionsService {
     return this.mapSections(sections);
   }
 
-  async clearTable() {
-    await this.sectionRepository.query(`TRUNCATE sections CASCADE;`);
+  @Cron(CronExpression.EVERY_DAY_AT_3AM)
+  async handleCronUpdateDatabase() {
+    this.logger.log('Updating database.');
+    await this.updateDatabase();
   }
 
-  async getSectionsFromApi(): Promise<Sections> {
-    const dataAsHtmlString = await this.externalApiService.getSections();
-    const sections = await this.scrapeDataService.scrapeSections(
-      dataAsHtmlString,
-    );
-
-    return sections;
-  }
-
-  async updateDatabase(): Promise<void> {
+  private async updateDatabase(): Promise<void> {
     const sections = await this.getSectionsFromApi();
     const canUpdate = await this.checkIfCanUpdateDatabase(sections);
 
@@ -72,7 +58,16 @@ export class SectionsService {
     }
   }
 
-  async checkIfCanUpdateDatabase(sections: Sections): Promise<boolean> {
+  private async getSectionsFromApi(): Promise<Sections> {
+    const dataAsHtmlString = await this.externalApiService.getSections();
+    const sections = await this.scrapeDataService.scrapeSections(
+      dataAsHtmlString,
+    );
+
+    return sections;
+  }
+
+  private async checkIfCanUpdateDatabase(sections: Sections): Promise<boolean> {
     let canUpdate = true;
     const randomSection = sections[25];
     const lessons = await this.lessonsService.getLessonFromApi(
@@ -84,6 +79,21 @@ export class SectionsService {
     if (lessons.length < 20) canUpdate = false;
 
     return canUpdate;
+  }
+
+  private async create(
+    createSectionDto: CreateSectionDto,
+  ): Promise<SectionResponse> {
+    const { name, url, type } = createSectionDto;
+
+    const section = this.sectionRepository.create({ name, url, type });
+    const savedSection = await this.sectionRepository.save(section);
+
+    return this.mapSection(savedSection);
+  }
+
+  private async clearTable() {
+    await this.sectionRepository.query(`TRUNCATE sections CASCADE;`);
   }
 
   private mapSections(sections: Section[]): SectionResponse[] {

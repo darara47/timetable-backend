@@ -13,9 +13,4 @@ export class SectionsController {
   async getSections(): Promise<SectionResponse[]> {
     return this.sectionsService.getAll();
   }
-
-  @Get('update/update')
-  async update() {
-    return this.sectionsService.updateDatabase();
-  }
 }
