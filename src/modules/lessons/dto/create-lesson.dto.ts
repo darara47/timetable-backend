@@ -1,5 +1,5 @@
 import { IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { LessonType, WeekDays } from 'src/types/lesson.types';
+import { LessonType, WeekDays } from '../../../types/lesson.types';
 
 export class CreateLessonDto {
   @IsString()

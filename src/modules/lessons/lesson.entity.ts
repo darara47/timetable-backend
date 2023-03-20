@@ -1,4 +1,4 @@
-import { LessonType, WeekDays } from 'src/types/lesson.types';
+import { LessonType, WeekDays } from '../../types/lesson.types';
 import {
   Column,
   CreateDateColumn,

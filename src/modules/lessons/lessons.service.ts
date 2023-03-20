@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { SectionTypes } from 'src/types/sections.types';
-import { LessonResponse, ScrapeLesson } from 'src/types/lesson.types';
+import { SectionTypes } from '../../types/sections.types';
+import { LessonResponse, ScrapeLesson } from '../../types/lesson.types';
 import { Repository } from 'typeorm';
 import { ExternalApiService } from '../external-api/external-api.service';
 import { ScrapeDataService } from '../scrape-data/scrape-data.service';

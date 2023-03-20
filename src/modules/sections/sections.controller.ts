@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { SectionResponse } from 'src/types/sections.types';
+import { SectionResponse } from '../../types/sections.types';
 import { SectionsService } from './sections.service';
 
 @ApiTags('Sections')

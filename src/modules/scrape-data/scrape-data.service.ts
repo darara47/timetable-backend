@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { JSDOM } from 'jsdom';
-import { Sections, SectionTypes } from 'src/types/sections.types';
+import { Sections, SectionTypes } from '../../types/sections.types';
 import {
   AnchorData,
   BasicScrapeLesson,
   LessonType,
   ScrapeLesson,
   WeekDays,
-} from 'src/types/lesson.types';
+} from '../../types/lesson.types';
 
 @Injectable()
 export class ScrapeDataService {

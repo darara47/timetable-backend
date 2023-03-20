@@ -1,6 +1,6 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
-import { LessonResponse } from 'src/types/lesson.types';
+import { LessonResponse } from '../../types/lesson.types';
 import { LessonsService } from './lessons.service';
 
 @ApiTags('Lessons')
