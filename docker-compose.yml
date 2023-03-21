@@ -13,7 +13,8 @@ services:
     command: npm run start:dev
     ports:
       - ${APP_PORT}:3000
-
+    depends_on:
+      - postgres
   postgres:
     image: postgres
     restart: always
@@ -23,3 +24,8 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
       - '${DB_PORT}:5432'
+    volumes:
+      - docker-nest-postgres:/var/lib/postgresql/data
+
+volumes:
+  docker-nest-postgres:
