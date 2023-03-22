@@ -18,12 +18,12 @@ export class SectionsController {
 
   @Get('update-database/:secretKey')
   async updateDatabase(@Param('secretKey') secretKey: string): Promise<void> {
+    this.logger.log('Updating database.');
     return this.sectionsService.updateDatabase(secretKey);
   }
 
   @Cron(CronExpression.EVERY_DAY_AT_3AM)
   async handleCronUpdateDatabase() {
-    this.logger.log('Updating database.');
     const secretKey = process.env.CRON_SECRET_KEY;
     await this.sectionsService.updateDatabase(secretKey);
   }
