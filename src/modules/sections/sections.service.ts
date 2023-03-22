@@ -26,7 +26,7 @@ export class SectionsService {
     return this.mapSections(sections);
   }
 
-  @Cron(CronExpression.EVERY_DAY_AT_3AM)
+  @Cron(CronExpression.EVERY_5_MINUTES)
   async handleCronUpdateDatabase() {
     this.logger.log('Updating database.');
     await this.updateDatabase();
