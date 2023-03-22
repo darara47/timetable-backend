@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
-import { SectionResponse, Sections } from 'src/types/sections.types';
+import { SectionResponse, Sections } from '../../types/sections.types';
 import { Repository } from 'typeorm';
 import { ExternalApiService } from '../external-api/external-api.service';
 import { LessonsService } from '../lessons/lessons.service';

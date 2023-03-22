@@ -1,5 +1,5 @@
 import { IsEnum, IsString } from 'class-validator';
-import { SectionTypes } from 'src/types/sections.types';
+import { SectionTypes } from '../../../types/sections.types';
 
 export class CreateSectionDto {
   @IsString()
