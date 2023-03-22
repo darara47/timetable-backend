@@ -3,8 +3,10 @@ import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as dotenv from 'dotenv';
+import { QueryRunnerSource } from './database/query-runner';
 import { ExternalApiModule } from './modules/external-api/external-api.module';
 import { LessonsModule } from './modules/lessons/lessons.module';
+import { ManageDatabaseModule } from './modules/manage-database/manage-database.module';
 import { ScrapeDataModule } from './modules/scrape-data/scrape-data.module';
 import { SectionsModule } from './modules/sections/sections.module';
 
@@ -26,11 +28,12 @@ dotenv.config();
       synchronize: true,
     }),
     ExternalApiModule,
+    LessonsModule,
+    ManageDatabaseModule,
     ScrapeDataModule,
     SectionsModule,
-    LessonsModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [QueryRunnerSource],
 })
 export class AppModule {}

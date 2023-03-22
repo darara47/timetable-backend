@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SectionTypes } from '../../types/sections.types';
 import { LessonResponse, ScrapeLesson } from '../../types/lesson.types';
-import { Repository } from 'typeorm';
+import { QueryRunner, Repository } from 'typeorm';
 import { ExternalApiService } from '../external-api/external-api.service';
 import { ScrapeDataService } from '../scrape-data/scrape-data.service';
 import { CreateLessonDto } from './dto/create-lesson.dto';
@@ -40,7 +40,10 @@ export class LessonsService {
     return lesson;
   }
 
-  async create(createLessonDto: CreateLessonDto): Promise<Lesson> {
+  async create(
+    createLessonDto: CreateLessonDto,
+    queryRunner: QueryRunner,
+  ): Promise<Lesson> {
     const {
       className,
       classURL,
@@ -55,7 +58,7 @@ export class LessonsService {
       weekDay,
     } = createLessonDto;
 
-    const section = this.lessonRepository.create({
+    const section = queryRunner.manager.create(Lesson, {
       className,
       classURL,
       classroomName,
@@ -68,12 +71,8 @@ export class LessonsService {
       type,
       weekDay,
     });
-    const savedSection = await this.lessonRepository.save(section);
+    const savedSection = await queryRunner.manager.save(section);
 
     return savedSection;
-  }
-
-  async clearTable() {
-    await this.lessonRepository.query(`TRUNCATE sections CASCADE;`);
   }
 }
