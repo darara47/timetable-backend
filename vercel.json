@@ -15,8 +15,8 @@
   ],
   "crons": [
     {
-      "path": "/sections/update-database/${env:CRON_SECRET_KEY}",
-      "schedule": "37 19 * * *"
+      "path": "/sections/update-database/${env.CRON_SECRET_KEY}",
+      "schedule": "45 19 * * *"
     }
   ]
 }
