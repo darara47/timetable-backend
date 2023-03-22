@@ -3,10 +3,11 @@ import { AppModule } from './app.module';
 import 'reflect-metadata';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as dotenv from 'dotenv';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 dotenv.config();
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app: NestExpressApplication = await NestFactory.create(AppModule);
 
   const re = 'localhost';
   const regexp = new RegExp(re, 'i');
@@ -21,7 +22,10 @@ async function bootstrap() {
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('swagger', app, document);
+  app.useStaticAssets(`${__dirname}/static`, {
+    prefix: '/swagger',
+  });
 
   await app.listen(process.env.APP_PORT);
 }
