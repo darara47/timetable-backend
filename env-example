@@ -4,4 +4,6 @@ DB_NAME='timetable'
 DB_PASSWORD='Pass123'
 DB_PORT=3406
 
+CRON_SECRET_KEY='secret-key'
+
 APP_PORT=3020

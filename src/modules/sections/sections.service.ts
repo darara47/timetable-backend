@@ -1,6 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as dotenv from 'dotenv';
 import { SectionResponse, Sections } from '../../types/sections.types';
 import { Repository } from 'typeorm';
 import { ExternalApiService } from '../external-api/external-api.service';
@@ -9,6 +9,7 @@ import { ScrapeDataService } from '../scrape-data/scrape-data.service';
 import { CreateSectionDto } from './dto/create-section.dto';
 import { Section } from './section.entity';
 
+dotenv.config();
 @Injectable()
 export class SectionsService {
   constructor(
@@ -18,7 +19,6 @@ export class SectionsService {
     private readonly lessonsService: LessonsService,
     private readonly scrapeDataService: ScrapeDataService,
   ) {}
-  private readonly logger = new Logger(SectionsService.name);
 
   async getAll(): Promise<SectionResponse[]> {
     const sections = await this.sectionRepository.find();
@@ -26,13 +26,14 @@ export class SectionsService {
     return this.mapSections(sections);
   }
 
-  @Cron(CronExpression.EVERY_5_MINUTES)
-  async handleCronUpdateDatabase() {
-    this.logger.log('Updating database.');
-    await this.updateDatabase();
-  }
+  async updateDatabase(secretKeyParam: string): Promise<void> {
+    const secretKeyEnv = process.env.CRON_SECRET_KEY;
 
-  private async updateDatabase(): Promise<void> {
+    if (secretKeyParam !== secretKeyEnv) {
+      console.error('Wrong secret key.');
+      return;
+    }
+
     const sections = await this.getSectionsFromApi();
     const canUpdate = await this.checkIfCanUpdateDatabase(sections);
 
