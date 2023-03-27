@@ -13,7 +13,7 @@ async function bootstrap() {
   const regexp = new RegExp(re, 'i');
 
   app.enableCors({
-    origin: ['http://localhost:3000', regexp],
+    origin: [`http://localhost:${process.env.APP_PORT}`, regexp],
   });
 
   const config = new DocumentBuilder()

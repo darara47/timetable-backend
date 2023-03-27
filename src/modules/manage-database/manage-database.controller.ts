@@ -1,7 +1,10 @@
 import { Controller, Get } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { ApiExcludeController, ApiTags } from '@nestjs/swagger';
 import { ManageDatabaseService } from './manage-database.service';
 
+@ApiExcludeController()
+@ApiTags('Manage database')
 @Controller('manage-database')
 export class ManageDatabaseController {
   constructor(private readonly manageDatabaseService: ManageDatabaseService) {}
