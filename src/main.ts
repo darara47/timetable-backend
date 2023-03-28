@@ -13,19 +13,19 @@ async function bootstrap() {
   const regexp = new RegExp(re, 'i');
 
   app.enableCors({
-    origin: ['http://localhost:3000', regexp],
+    origin: [`http://localhost:${process.env.APP_PORT}`, regexp],
   });
 
   const config = new DocumentBuilder()
-    .setTitle('App to management library')
-    .setDescription('All endpoints with example data')
+    .setTitle('Tygiel - timetable app')
+    .setDescription('Below are all endpoints with example data')
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('swagger', app, document);
+  SwaggerModule.setup('api', app, document);
 
   app.useStaticAssets(`${__dirname}/assets/swagger-ui-dist`, {
-    prefix: '/swagger',
+    prefix: '/api',
   });
 
   await app.listen(process.env.APP_PORT);
